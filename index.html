@@ -1,0 +1,194 @@
+---
+
+---
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{{site.title}} by VectorLogoZone</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .spinner { max-width: 8em;}
+    </style>
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <h1 class="row justify-content-center mt-2">
+        <img class="mr-3" src="favicon.svg" style="height:1em;" alt="VLZ Quiz logo" />
+        {{site.title}}
+    </h1>
+    <hr class="mt-0 mb-1"/>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col col-sm-8 col-md-6 col-lg-4">
+            <div class="row justify-content-center" id="spinner">
+                <img class="spinner" src="https://www.vectorlogo.zone/images/spinner.svg"/>
+            </div>
+            <h2 class="d-none row justify-content-center has-question mb-0" id="question">
+
+            </h2>
+
+            <div class="d-none row justify-content-center has-question" id="answers">
+
+            </div>
+
+            <div class="d-none row justify-content-center has-question mt-2" id="score">
+            </div>
+
+            <div class="d-none row justify-content-center mt-2" id="continue">
+                <button class="btn btn-lg btn-primary px-4" href="#">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About Modal -->
+<div class="modal" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aboutModalLabel"><img class="mr-1" src="favicon.svg" style="height:1.25rem" /> {{site.title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>All logos are the property of their original owners.</p>
+                <p>Logos are the <a href="https://www.vectorlogo.zone/report/all-icon.html">icons</a> from <a href="https://www.vectorlogo.zone/">VectorLogoZone</a></p>
+                <p>View the <a href="https://github.com/VectorLogoZone/vlz-quiz">source code</a> on Github!</p>
+                <!-- LATER: links to app -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<nav class="d-flex navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+    <a class="navbar-brand" href="https://www.vectorlogo.zone/">VectorLogoZone</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#logo">Guess Logo<span class="sr-only"> (current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#name">Guess Name</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+
+    let correctCount = 0;
+    let totalCount = 0;
+
+    // from https://www.frankmitchell.org/2015/01/fisher-yates/
+    function shuffle(array) {
+        var i = 0;
+        var j = 0;
+        var temp = null;
+        for (i = array.length - 1; i > 0; i -= 1) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+
+    function updateScore() {
+        if (totalCount > 0) {
+            $("#score").text(`${correctCount} of ${totalCount} (${Math.floor(100*correctCount/totalCount)}%)`);
+            $("#score").removeClass("d-none");
+        }
+    }
+
+    function answerClick(evt) {
+        console.log("INFO: button click", evt);
+        var btn = $(evt.currentTarget);
+        btn.removeClass("btn-outline-secondary");
+        let correct = false;
+        if ($("#question").attr("data-name") === btn.attr("data-name")) {
+            correct = true;
+            btn.addClass("btn-success");
+        } else {
+            btn.addClass("btn-danger");
+            btn.append($("<span>").addClass("pl-2").addClass("font-weight-bold").text(btn.attr("data-name")));
+        }
+        if ($("#continue").hasClass("d-none")) {
+            correctCount += correct ? 1 : 0;
+            totalCount += 1
+            updateScore();
+            $("#continue").removeClass("d-none");
+        }
+    }
+
+    function showQuestion(questions) {
+        console.log("INFO: questions", questions);
+        questions = questions.slice(0, 4);
+        $("#question").text(questions[0].name).attr("data-name", questions[0].name);
+        shuffle(questions);
+        for (var loop = 0; loop < questions.length; loop++) {
+            $("#answers").append(
+                $("<button>").addClass("btn").addClass("btn-outline-secondary").addClass("btn-block").addClass("mt-3").addClass("mx-3")
+                    .on("click", answerClick)
+                    .attr("data-name", questions[loop].name)
+                    .append($("<img>")
+                        .addClass("answer-icon")
+                        .attr("src", questions[loop].logo)
+                        .attr("alt", "Answer #" + loop)
+                    )
+            );
+        }
+        $("#spinner").addClass("d-none");
+        $("#question").removeClass("d-none");
+        $("#answers").removeClass("d-none");
+        $("#continue").addClass("d-none");
+    }
+
+    function hideQuestion() {
+        $("#spinner").removeClass("d-none");
+        $("#question").addClass("d-none").empty();
+        $("#answers").addClass("d-none").empty();
+        $("#score").addClass("d-none");
+        $("#continue").addClass("d-none");
+    }
+
+    function loadQuestion() {
+        hideQuestion();
+        $.ajax({
+            complete: function(xhr, status) { console.log("INFO: complete (" + status + ")"); },
+            error: function(xhr, errCode, errMessage) { console.log("ERROR: " + errMessage + " (" + errCode + ")"); },
+            dataType: "jsonp",
+            url: "https://api.vectorlogo.zone/api/quiz.json",
+            success: showQuestion
+        });
+    }
+
+    $(window).on("load", function(event) {
+        loadQuestion();
+    });
+
+    $("#continue").on("click", loadQuestion);
+
+</script>
+</body>
+</html>
+

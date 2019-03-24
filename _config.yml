@@ -1,0 +1,22 @@
+#
+# _config.yml for app.vectorlogo.zone
+#
+
+exclude: [ "CNAME", "tmp", "**/*_src*", "**/*.sh", "**/*.md" ]
+permalink: /news/:year/:title.html
+production_url: https://quiz.vectorlogo.zone
+title: 'Logo Quiz'
+markdown: kramdown
+plugins:
+  - jekyll-redirect-from
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+    values:
+      xlayout: "default"
+
+google_analytics_id: LATER
+google_validation: LATER
+bing_validation: LATER
+yandex_validation: LATER
