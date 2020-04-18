@@ -12,7 +12,7 @@ Contributions are welcome!  Please follow the standard Github [Fork & Pull Reque
 
 ## Credits
 
-[![Bootstrap](https://www.vectorlogo.zone/logos/getbootstrap/getbootstrap-ar21.svg)](http://getbootstrap.com/ "HTML/CSS Framework")
+[![Bootstrap](https://www.vectorlogo.zone/logos/getbootstrap/getbootstrap-ar21.svg)](https://getbootstrap.com/ "HTML/CSS Framework")
 [![CloudFlare](https://www.vectorlogo.zone/logos/cloudflare/cloudflare-ar21.svg)](https://www.cloudflare.com/ "CDN")
 [![Google Noto Emoji](https://www.vectorlogo.zone/logos/google/google-ar21.svg)](https://www.google.com/get/noto/help/emoji/smileys-people/ "Logo/favicon")
 [![Google Analytics](https://www.vectorlogo.zone/logos/google_analytics/google_analytics-ar21.svg)](http://www.google.com/analytics/ "Analytics")
